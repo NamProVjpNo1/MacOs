@@ -1,0 +1,23 @@
+name: Build macOS
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyinstaller
+      - run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run: pyinstaller --onefile --windowed quan_ly_nhan_su.py
+      - run: cd dist && zip -r ../MyApp-mac.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MyApp-mac
+          path: MyApp-mac.zip
